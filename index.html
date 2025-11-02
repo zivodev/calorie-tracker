@@ -1,114 +1,110 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>CalorieScope</title>
-<link rel="icon" type="image/png" href="logo.png">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    background: #111;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-  }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>CalorieScope</title>
+  <link rel="icon" type="image/png" href="logo.png" />
 
-  .container {
-    width: 100%;
-    max-width: 400px;
-    padding: 20px;
-    box-sizing: border-box;
-    position: relative;
-  }
+  <style>
+    :root {
+      --bg: #111;
+      --fg: #fff;
+      --accent: #d3a15d;
+      --accent-light: #e2b56f;
+    }
 
-  /* Floating language button */
-  #langBtn {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    background: #d3a15d;
-    color: #111;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 32px;
-    text-align: center;
-    padding: 0;
-    z-index: 1000;
-    transition: background 0.3s, transform 0.2s;
-  }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-  #langBtn:hover {
-    background: #e2b56f;
-    transform: scale(1.1);
-  }
+    .container {
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+    }
 
-  /* Loading bar */
-  #loadingBar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 4px;
-    width: 0%;
-    background: linear-gradient(90deg, #d3a15d, #f0c57a);
-    transition: width 0.3s ease;
-    z-index: 2000;
-  }
+    /* Language switch */
+    #langBtn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 32px;
+      text-align: center;
+      transition: background 0.3s, transform 0.2s;
+      z-index: 1000;
+    }
 
-  @keyframes loadingPulse {
-    0% { opacity: 0.7; }
-    50% { opacity: 1; }
-    100% { opacity: 0.7; }
-  }
+    #langBtn:hover {
+      background: var(--accent-light);
+      transform: scale(1.1);
+    }
 
-  #loadingBar.active {
-    width: 100%;
-    animation: loadingPulse 1s infinite;
-  }
+    /* Loading bar */
+    #loadingBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      transition: width 0.3s ease;
+      z-index: 2000;
+    }
 
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 40px;
-  }
+    #loadingBar.active {
+      width: 100%;
+      animation: pulse 1s infinite;
+    }
 
-  input, select, button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border-radius: 10px;
-    border: none;
-    box-sizing: border-box;
-  }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
 
-  input, select {
-    background: #222;
-    color: #fff;
-  }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 40px;
+    }
 
-  button[type="submit"], #sendImage {
-    background: #d3a15d;
-    color: #111;
-    font-weight: 600;
-    cursor: pointer;
-  }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      box-sizing: border-box;
+    }
 
-    /* ✨ Hover effect (same as language button) */
-    button[type="submit"]:hover,
-    #sendImage:hover,
-    #openImagePicker:hover {
-      background: #e2b56f;
-      transform: scale(1.05);
+    input, select {
+      background: #222;
+      color: var(--fg);
+    }
+
+    button[type="submit"], #sendImage {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 600;
+      cursor: pointer;
     }
 
     #goal, #progressContainer {
@@ -122,63 +118,11 @@
     }
 
     @media (max-width: 480px) {
-      input, select, button {
-        font-size: 18px;
-      }
+      input, select, button { font-size: 18px; }
     }
-    
   </style>
 </head>
-<body>
-  <div class="container" dir="ltr">
-    <button id="langBtn">ع</button>
 
-    <form id="userForm">
-      <input type="number" id="age" placeholder="Age" required />
-      <input type="number" id="weight" placeholder="Weight (kg)" required />
-      <input type="number" id="height" placeholder="Height (cm)" required />
-
-      <select id="gender" required>
-        <option value="">Select Gender</option>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
-
-      <select id="activity" required>
-        <option value="">Activity Level</option>
-        <option value="sedentary">Sedentary (little or no exercise)</option>
-        <option value="light">Lightly Active (1–3 days/week)</option>
-        <option value="moderate">Moderately Active (3–5 days/week)</option>
-        <option value="active">Active (6–7 days/week)</option>
-        <option value="very_active">Very Active (hard daily exercise)</option>
-      </select>
-
-      <button type="submit">Get Calorie Goal</button>
-    </form>
-
-    <div id="goal"></div>
-
-    <div id="progressContainer" style="display:none;">
-      <progress id="calorieBar" value="0" max="100"></progress>
-      <p id="progressText">0 / 0 kcal</p>
-
-  #goal, #progressContainer {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  progress {
-    width: 100%;
-    height: 18px;
-  }
-
-  @media (max-width: 480px) {
-    input, select, button {
-      font-size: 18px;
-    }
-  }
-</style>
-</head>
 <body>
   <div id="loadingBar"></div>
   <div class="container" dir="ltr">
@@ -209,7 +153,7 @@
 
     <div id="goal"></div>
 
-    <div id="progressContainer" style="display:none;">
+    <div id="progressContainer" hidden>
       <progress id="calorieBar" value="0" max="100"></progress>
       <p id="progressText">0 / 0 kcal</p>
       <input type="file" id="mealImage" accept="image/*" />
@@ -217,163 +161,129 @@
     </div>
   </div>
 
-<script>
-let goal = 0;
-let current = 0;
-let lang = "en";
+  <script>
+    let goal = 0, current = 0, lang = "en";
 
-const texts = {
-  en: {
-    age: "Age",
-    weight: "Weight (kg)",
-    height: "Height (cm)",
-    gender: "Select Gender",
-    male: "Male",
-    female: "Female",
-    activity: "Activity Level",
-    sedentary: "Sedentary (little or no exercise)",
-    light: "Lightly Active (1–3 days/week)",
-    moderate: "Moderately Active (3–5 days/week)",
-    active: "Active (6–7 days/week)",
-    very_active: "Very Active (hard daily exercise)",
-    submit: "Get Calorie Goal",
-    send: "Send Image",
-    goalText: "Your daily goal:",
-    switchIcon: "ع"
-  },
-  ar: {
-    age: "العمر",
-    weight: "الوزن (كجم)",
-    height: "الطول (سم)",
-    gender: "اختر الجنس",
-    male: "ذكر",
-    female: "أنثى",
-    activity: "مستوى النشاط",
-    sedentary: "خامل (قليل أو بدون تمرين)",
-    light: "نشاط خفيف (1–3 أيام/أسبوع)",
-    moderate: "نشاط معتدل (3–5 أيام/أسبوع)",
-    active: "نشاط مرتفع (6–7 أيام/أسبوع)",
-    very_active: "نشاط عالي جداً (تمارين قوية يومياً)",
-    submit: "احسب الهدف اليومي",
-    send: "إرسال الصورة",
-    goalText: "هدفك اليومي:",
-    switchIcon: "e"
-  }
-};
+    const texts = {
+      en: {
+        age: "Age", weight: "Weight (kg)", height: "Height (cm)",
+        gender: "Select Gender", male: "Male", female: "Female",
+        activity: "Activity Level",
+        sedentary: "Sedentary (little or no exercise)",
+        light: "Lightly Active (1–3 days/week)",
+        moderate: "Moderately Active (3–5 days/week)",
+        active: "Active (6–7 days/week)",
+        very_active: "Very Active (hard daily exercise)",
+        submit: "Get Calorie Goal", send: "Send Image",
+        goalText: "Your daily goal:", switchIcon: "ع"
+      },
+      ar: {
+        age: "العمر", weight: "الوزن (كجم)", height: "الطول (سم)",
+        gender: "اختر الجنس", male: "ذكر", female: "أنثى",
+        activity: "مستوى النشاط",
+        sedentary: "خامل (قليل أو بدون تمرين)",
+        light: "نشاط خفيف (1–3 أيام/أسبوع)",
+        moderate: "نشاط معتدل (3–5 أيام/أسبوع)",
+        active: "نشاط مرتفع (6–7 أيام/أسبوع)",
+        very_active: "نشاط عالي جداً (تمارين قوية يومياً)",
+        submit: "احسب الهدف اليومي", send: "إرسال الصورة",
+        goalText: "هدفك اليومي:", switchIcon: "e"
+      }
+    };
 
-function updateLang() {
-  const t = texts[lang];
-  document.querySelector("html").lang = lang;
-  document.querySelector(".container").dir = lang === "ar" ? "rtl" : "ltr";
+    const el = id => document.getElementById(id);
 
-  document.getElementById("age").placeholder = t.age;
-  document.getElementById("weight").placeholder = t.weight;
-  document.getElementById("height").placeholder = t.height;
+    function updateLang() {
+      const t = texts[lang];
+      document.documentElement.lang = lang;
+      document.querySelector(".container").dir = lang === "ar" ? "rtl" : "ltr";
 
-  const gender = document.getElementById("gender");
-  gender.options[0].text = t.gender;
-  gender.options[1].text = t.male;
-  gender.options[2].text = t.female;
+      el("age").placeholder = t.age;
+      el("weight").placeholder = t.weight;
+      el("height").placeholder = t.height;
 
-  const activity = document.getElementById("activity");
-  activity.options[0].text = t.activity;
-  activity.options[1].text = t.sedentary;
-  activity.options[2].text = t.light;
-  activity.options[3].text = t.moderate;
-  activity.options[4].text = t.active;
-  activity.options[5].text = t.very_active;
+      const gender = el("gender").options;
+      [gender[0].text, gender[1].text, gender[2].text] = [t.gender, t.male, t.female];
 
-  document.querySelector('button[type="submit"]').textContent = t.submit;
-  document.getElementById('sendImage').textContent = t.send;
-  document.getElementById('langBtn').textContent = t.switchIcon;
+      const activity = el("activity").options;
+      [activity[0].text, activity[1].text, activity[2].text, activity[3].text, activity[4].text, activity[5].text] =
+        [t.activity, t.sedentary, t.light, t.moderate, t.active, t.very_active];
 
-  if (goal > 0) {
-    document.getElementById('goal').textContent = `${t.goalText} ${goal} kcal`;
-  }
-}
+      document.querySelector('button[type="submit"]').textContent = t.submit;
+      el("sendImage").textContent = t.send;
+      el("langBtn").textContent = t.switchIcon;
 
-function showLoading(show) {
-  const bar = document.getElementById('loadingBar');
-  if (show) bar.classList.add('active');
-  else bar.classList.remove('active');
-}
+      if (goal) el("goal").textContent = `${t.goalText} ${goal} kcal`;
+    }
 
-document.getElementById("langBtn").addEventListener("click", () => {
-  lang = lang === "en" ? "ar" : "en";
-  updateLang();
-});
+    function toggleLoading(show) {
+      el("loadingBar").classList.toggle("active", show);
+    }
 
-updateLang();
-
-/* --- Calorie goal logic --- */
-document.getElementById('userForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  showLoading(true);
-
-  const data = {
-    age: document.getElementById('age').value,
-    weight: document.getElementById('weight').value,
-    height: document.getElementById('height').value,
-    gender: document.getElementById('gender').value,
-    activity: document.getElementById('activity').value
-  };
-
-  try {
-    const res = await fetch('https://zivodev.app.n8n.cloud/webhook/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+    el("langBtn").addEventListener("click", () => {
+      lang = lang === "en" ? "ar" : "en";
+      updateLang();
     });
 
-    const text = await res.text();
-    let result;
-    try { result = JSON.parse(text); } catch { result = {}; }
+    updateLang();
 
-    goal = Number(result.dailyGoal) || 0;
-    document.getElementById('goal').textContent = `${texts[lang].goalText} ${goal} kcal`;
-    document.getElementById('progressContainer').style.display = 'block';
-    document.getElementById('calorieBar').max = Math.max(goal, 1);
-    document.getElementById('progressText').textContent = `${current} / ${goal} kcal`;
+    el("userForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      toggleLoading(true);
 
-  } catch (err) {
-    console.error("Fetch error:", err);
-    alert('Error fetching goal.');
-  } finally {
-    showLoading(false);
-  }
-});
+      const data = {
+        age: el("age").value,
+        weight: el("weight").value,
+        height: el("height").value,
+        gender: el("gender").value,
+        activity: el("activity").value
+      };
 
-document.getElementById('sendImage').addEventListener('click', async () => {
-  const file = document.getElementById('mealImage').files[0];
-  if (!file) return alert('Upload an image first');
+      try {
+        const res = await fetch("https://zivodev.app.n8n.cloud/webhook/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
 
-  const formData = new FormData();
-  formData.append('image', file);
-  formData.append('goal', goal);
-  formData.append('current', current);
+        const result = await res.json().catch(() => ({}));
+        goal = +result.dailyGoal || 0;
 
-  showLoading(true);
-  try {
-    const res = await fetch('https://YOUR-N8N-URL/webhook/meal-image', {
-      method: 'POST',
-      body: formData
+        el("goal").textContent = `${texts[lang].goalText} ${goal} kcal`;
+        el("progressContainer").hidden = false;
+        el("calorieBar").max = Math.max(goal, 1);
+        el("progressText").textContent = `${current} / ${goal} kcal`;
+      } catch {
+        alert("Error fetching goal.");
+      } finally {
+        toggleLoading(false);
+      }
     });
 
-    const result = await res.json();
-    const calories = Number(result.mealCalories) || 0;
-    current += calories;
+    el("sendImage").addEventListener("click", async () => {
+      const file = el("mealImage").files[0];
+      if (!file) return alert("Upload an image first");
 
-    document.getElementById('calorieBar').value = current;
-    document.getElementById('progressText').textContent = `${current} / ${goal} kcal`;
-  } catch (err) {
-    alert('Error uploading image.');
-  } finally {
-    showLoading(false);
-  }
-});
-</script>
-</body>
-</html>
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("goal", goal);
+      formData.append("current", current);
 
+      toggleLoading(true);
+      try {
+        const res = await fetch("https://YOUR-N8N-URL/webhook/meal-image", { method: "POST", body: formData });
+        const result = await res.json().catch(() => ({}));
+        const calories = +result.mealCalories || 0;
+        current += calories;
+
+        el("calorieBar").value = current;
+        el("progressText").textContent = `${current} / ${goal} kcal`;
+      } catch {
+        alert("Error uploading image.");
+      } finally {
+        toggleLoading(false);
+      }
+    });
+  </script>
 </body>
 </html>
