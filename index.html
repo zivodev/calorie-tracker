@@ -32,8 +32,6 @@
 
 <script>
   
-fetch("https://zivodev.app.n8n.cloud/webhook-test/76e55b4b-dd4c-405e-9ba6-7a0499107e35")
-  
 let goal = 0;
 let current = 0;
 
@@ -47,7 +45,7 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
   };
 
   try {
-    const res = await fetch('https://zivodev.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6', {
+    const res = await fetch('https://zivodev.app.n8n.cloud/webhook/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
