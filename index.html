@@ -33,11 +33,11 @@
     position: relative;
   }
 
-  /* 🌐 Small circular language button */
+  /* 🌐 Floating small circular language button */
   #langBtn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    position: fixed;
+    top: 15px;
+    right: 15px;
     background: #d3a15d;
     color: #111;
     border: none;
@@ -50,11 +50,13 @@
     line-height: 32px;
     text-align: center;
     padding: 0;
-    transition: background 0.3s;
+    z-index: 1000;
+    transition: background 0.3s, transform 0.2s;
   }
 
   #langBtn:hover {
     background: #e2b56f;
+    transform: scale(1.1);
   }
 
   form {
@@ -179,7 +181,7 @@ const texts = {
     submit: "احسب الهدف اليومي",
     send: "إرسال الصورة",
     goalText: "هدفك اليومي:",
-    switchIcon: "A"
+    switchIcon: "e"
   }
 };
 
@@ -280,6 +282,7 @@ document.getElementById('sendImage').addEventListener('click', async () => {
 </script>
 </body>
 </html>
+
 
 
 
