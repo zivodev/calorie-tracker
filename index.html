@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=5.0, maximum-scale=1.0" />
 <title>CalorieScope</title>
 <link rel="icon" type="image/png" href="logo.png">
-<content>CalorieScope</content>
 <style>
   body {
     margin: 0;
@@ -17,6 +16,27 @@
     justify-content: center;
     align-items: flex-start;
     min-height: 100vh;
+  }
+
+  /* Brand header */
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .brand img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+  }
+
+  .brand-title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
   }
 
   .container {
@@ -183,6 +203,10 @@
   <div id="loadingBar"></div>
   <div class="container" dir="ltr">
     <button id="langBtn">ع</button>
+    <div class="brand" aria-label="CalorieScope">
+      <img src="logo.png" alt="" />
+      <span class="brand-title">CalorieScope</span>
+    </div>
 
     <form id="userForm">
       <input type="number" id="age" placeholder="Age" required />
