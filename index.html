@@ -6,6 +6,10 @@
 <title>CalorieScope</title>
 <link rel="icon" type="image/png" href="logo.png">
 <style>
+  :root {
+    --control-width: 180px;
+    --control-height: 44px;
+  }
   body {
     margin: 0;
     padding: 0;
@@ -228,6 +232,12 @@
     gap: 12px;
   }
 
+  .uploadLabel {
+    font-size: 14px;
+    color: #ddd;
+    user-select: none;
+  }
+
   /* Unified small circular button style */
   .circleBtn {
     width: 44px;
@@ -248,9 +258,11 @@
   }
 
   #manualCalories {
-    max-width: 180px;
+    width: var(--control-width);
+    height: var(--control-height);
     padding: 10px;
     font-size: 16px;
+    box-sizing: border-box;
   }
 
   #addCaloriesBtn {
@@ -271,6 +283,13 @@
     border: 2px solid #333;
     cursor: pointer;
     transition: 0.2s;
+    width: var(--control-width);
+    height: var(--control-height);
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
   }
   #uploadBtn:hover { background: #2a2a2a; }
 
@@ -328,8 +347,9 @@
         <!-- Upload row (top) -->
         <div class="uploadRow">
           <input type="file" id="mealImage" accept="image/*" />
-          <button id="uploadBtn" class="circleBtn" type="button" aria-label="Upload">⬆</button>
+          <button id="uploadBtn" type="button" aria-label="Upload">⬆</button>
           <button id="sendImage" class="circleBtn" type="button" aria-label="Send">➤</button>
+          <span id="addPhotoLabel" class="uploadLabel">Add a photo</span>
         </div>
 
         <!-- Manual calorie input (bottom) -->
@@ -364,7 +384,8 @@ const texts = {
     send: "➤",
     goalText: "Your daily goal:",
     switchIcon: "ع",
-    manualAdd: "Add calories manually"
+    manualAdd: "Add calories manually",
+    addPhoto: "Add a photo"
   },
   ar: {
     age: "العمر",
@@ -383,7 +404,8 @@ const texts = {
     send: "➤",
     goalText: "هدفك اليومي:",
     switchIcon: "e",
-    manualAdd: "أضف السعرات يدويًا"
+    manualAdd: "أضف السعرات يدويًا",
+    addPhoto: "أضف صورة"
   }
 };
 
@@ -413,6 +435,8 @@ function updateLang() {
   document.querySelector('button[type="submit"]').textContent = t.submit;
   document.getElementById('sendImage').textContent = t.send;
   document.getElementById('langBtn').textContent = t.switchIcon;
+  const addPhotoLabel = document.getElementById('addPhotoLabel');
+  if (addPhotoLabel) addPhotoLabel.textContent = t.addPhoto;
 
   if (goal > 0) {
     document.getElementById('goal').textContent = `${t.goalText} ${goal} kcal`;
