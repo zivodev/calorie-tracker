@@ -181,7 +181,13 @@
   }
 
   #sendImage {
-    margin-top: 10px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 55px;
+    padding: 0;
   }
 
   @media (max-width: 480px) {
@@ -196,6 +202,30 @@
       font-size: 20px;
       line-height: 50px;
     }
+
+    #sendImage {
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      line-height: 50px;
+    }
+  }
+
+  /* Actions row (manual add + send image) */
+  .actionsRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .actionCard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
   }
 </style>
 </head>
@@ -237,14 +267,21 @@
       <progress id="calorieBar" value="0" max="100"></progress>
       <p id="progressText">0 / 0 kcal</p>
 
-      <!-- Manual calorie input -->
-      <div class="manualAdd">
-        <input type="number" id="manualCalories" placeholder="Add calories manually" />
-        <button id="addCaloriesBtn" type="button">+</button>
-      </div>
+      <div class="actionsRow">
+        <!-- Manual calorie input -->
+        <div class="actionCard">
+          <div class="manualAdd">
+            <input type="number" id="manualCalories" placeholder="Add calories manually" />
+            <button id="addCaloriesBtn" type="button">+</button>
+          </div>
+        </div>
 
-      <input type="file" id="mealImage" accept="image/*" style="margin-top:10px;" />
-      <button id="sendImage">Send Image</button>
+        <!-- Image upload + send -->
+        <div class="actionCard">
+          <input type="file" id="mealImage" accept="image/*" />
+          <button id="sendImage" type="button">➤</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -268,7 +305,7 @@ const texts = {
     active: "Active (6–7 days/week)",
     very_active: "Very Active (hard daily exercise)",
     submit: "Get Calorie Goal",
-    send: "Send Image",
+    send: "➤",
     goalText: "Your daily goal:",
     switchIcon: "ع",
     manualAdd: "Add calories manually"
@@ -287,7 +324,7 @@ const texts = {
     active: "نشاط مرتفع (6–7 أيام/أسبوع)",
     very_active: "نشاط عالي جداً (تمارين قوية يومياً)",
     submit: "احسب الهدف اليومي",
-    send: "إرسال الصورة",
+    send: "➤",
     goalText: "هدفك اليومي:",
     switchIcon: "e",
     manualAdd: "أضف السعرات يدويًا"
