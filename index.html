@@ -246,6 +246,13 @@
   .uploadStatus.success { color: #5dd39e; }
   .uploadStatus.selected { color: #e2b56f; }
 
+  .uploadInfo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
   #imagePreview {
     width: 44px;
     height: 44px;
@@ -380,13 +387,17 @@
       </div>
 
       <div class="actionsColumn">
-        <!-- Upload row (top) -->
+        <!-- Upload indicator (top) -->
+        <div class="uploadInfo">
+          <img id="imagePreview" alt="preview" />
+          <span id="uploadStatus" class="uploadStatus"></span>
+        </div>
+
+        <!-- Upload row -->
         <div class="uploadRow">
           <input type="file" id="mealImage" accept="image/*" />
           <button id="uploadBtn" type="button" aria-label="Upload">⬆ Add a photo</button>
           <button id="sendImage" class="circleBtn" type="button" aria-label="Send">➤</button>
-          <img id="imagePreview" alt="preview" />
-          <span id="uploadStatus" class="uploadStatus"></span>
         </div>
 
         <!-- Manual calorie input (bottom) -->
@@ -402,6 +413,9 @@
 let goal = 0;
 let current = 0;
 let lang = "en";
+let proteinGoalTarget = 0;
+let carbGoalTarget = 0;
+let fatGoalTarget = 0;
 
 const texts = {
   en: {
@@ -426,6 +440,9 @@ const texts = {
     uploadNone: "No photo selected",
     uploadSelected: "Selected:",
     uploadSuccess: "Uploaded!",
+    proteinLabel: "Protein",
+    carbsLabel: "Carbs",
+    fatsLabel: "Fats",
     goalLabel: "Goal",
     goalMaintain: "Maintain weight",
     goalLose: "Lose weight",
@@ -455,6 +472,9 @@ const texts = {
     uploadNone: "لم يتم اختيار صورة",
     uploadSelected: "تم الاختيار:",
     uploadSuccess: "تم الرفع!",
+    proteinLabel: "البروتين",
+    carbsLabel: "الكربوهيدرات",
+    fatsLabel: "الدهون",
     goalLabel: "الهدف",
     goalMaintain: "الحفاظ على الوزن",
     goalLose: "خسارة الوزن",
@@ -508,6 +528,16 @@ function updateLang() {
   if (goal > 0) {
     document.getElementById('goalDisplay').textContent = `${t.goalText} ${goal} kcal`;
   }
+
+  // Update macro labels if visible
+  const proteinEl = document.getElementById('proteinText');
+  const carbsEl = document.getElementById('carbsText');
+  const fatEl = document.getElementById('fatText');
+  if (proteinEl && carbsEl && fatEl) {
+    proteinEl.textContent = `${t.proteinLabel}: 0g / ${proteinGoalTarget}g`;
+    carbsEl.textContent = `${t.carbsLabel}: 0g / ${carbGoalTarget}g`;
+    fatEl.textContent = `${t.fatsLabel}: 0g / ${fatGoalTarget}g`;
+  }
 }
 
 function showLoading(show) {
@@ -557,13 +587,13 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
     document.getElementById('progressText').textContent = `${current} / ${goal} kcal`;
 
     // update macro targets if provided by n8n
-    const proteinGoal = Number(result.proteinGoal) || 0;
-    const carbGoal = Number(result.carbGoal) || 0;
-    const fatGoal = Number(result.fatGoal) || 0;
+    proteinGoalTarget = Number(result.proteinGoal) || 0;
+    carbGoalTarget = Number(result.carbGoal) || 0;
+    fatGoalTarget = Number(result.fatGoal) || 0;
 
-    document.getElementById('proteinText').textContent = `Protein: 0g / ${proteinGoal}g`;
-    document.getElementById('carbsText').textContent = `Carbs: 0g / ${carbGoal}g`;
-    document.getElementById('fatText').textContent = `Fats: 0g / ${fatGoal}g`;
+    document.getElementById('proteinText').textContent = `${texts[lang].proteinLabel}: 0g / ${proteinGoalTarget}g`;
+    document.getElementById('carbsText').textContent = `${texts[lang].carbsLabel}: 0g / ${carbGoalTarget}g`;
+    document.getElementById('fatText').textContent = `${texts[lang].fatsLabel}: 0g / ${fatGoalTarget}g`;
 
   } catch (err) {
     console.error("Fetch error:", err);
