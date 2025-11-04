@@ -438,7 +438,7 @@ const texts = {
     manualAdd: "Add calories manually",
     addPhoto: "Add a photo",
     uploadNone: "No photo selected",
-    uploadSelected: "Selected:",
+    uploadSelected: "Image selected",
     uploadSuccess: "Uploaded!",
     proteinLabel: "Protein",
     carbsLabel: "Carbs",
@@ -470,7 +470,7 @@ const texts = {
     manualAdd: "أضف السعرات يدويًا",
     addPhoto: "أضف صورة",
     uploadNone: "لم يتم اختيار صورة",
-    uploadSelected: "تم الاختيار:",
+    uploadSelected: "تم اختيار الصورة",
     uploadSuccess: "تم الرفع!",
     proteinLabel: "البروتين",
     carbsLabel: "الكربوهيدرات",
@@ -672,7 +672,7 @@ if (mealInput) {
       if (preview) { preview.src = ''; preview.style.display = 'none'; }
       return;
     }
-    if (status) { status.textContent = `${texts[lang].uploadSelected} ${file.name}`; status.className = 'uploadStatus selected'; }
+    if (status) { status.textContent = texts[lang].uploadSelected; status.className = 'uploadStatus success'; }
     if (preview) {
       preview.src = URL.createObjectURL(file);
       preview.style.display = 'inline-block';
