@@ -6,15 +6,6 @@
 <title>CalorieScope</title>
 <link rel="icon" type="image/png" href="logo.png">
 <style>
-  /* custom font - ensure Baskerville.woff2 is next to this HTML */
-  @font-face {
-    font-family: 'Baskerville';
-    src: url('Baskerville.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-  }
-
   :root {
     --control-width: 180px;
     --control-height: 44px;
@@ -22,7 +13,7 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: 'Baskerville', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: #111;
     color: #fff;
     display: flex;
@@ -640,18 +631,10 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
   };
 
   try {
-    // build FormData instead of sending JSON (preserve non-JSON requirement)
-    const formForGoal = new FormData();
-    formForGoal.append('age', data.age);
-    formForGoal.append('weight', data.weight);
-    formForGoal.append('height', data.height);
-    formForGoal.append('gender', data.gender);
-    formForGoal.append('activity', data.activity);
-    formForGoal.append('goalType', data.goalType);
-
     const res = await fetch('https://zivodev.app.n8n.cloud/webhook/eff0e03c-8382-4f7f-a60b-05dfee430173', {
       method: 'POST',
-      body: formForGoal
+      headers: { 'Content-Type': 'application/json' },
+      body: fromData
     });
 
     const text = await res.text();
