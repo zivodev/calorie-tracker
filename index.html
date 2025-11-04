@@ -522,6 +522,8 @@ function updateLang() {
   document.getElementById('langBtn').textContent = t.switchIcon;
   const addPhotoLabel = document.getElementById('addPhotoLabel');
   if (addPhotoLabel) addPhotoLabel.textContent = t.addPhoto;
+  const uploadBtnEl = document.getElementById('uploadBtn');
+  if (uploadBtnEl) uploadBtnEl.textContent = `⬆ ${t.addPhoto}`;
   const uploadStatus = document.getElementById('uploadStatus');
   if (uploadStatus) { uploadStatus.textContent = t.uploadNone; uploadStatus.className = 'uploadStatus'; }
 
@@ -549,9 +551,51 @@ function showLoading(show) {
 document.getElementById("langBtn").addEventListener("click", () => {
   lang = lang === "en" ? "ar" : "en";
   updateLang();
+  try { localStorage.setItem('cs_lang', lang); } catch {}
 });
 
+// Initialize language from storage
+try {
+  const savedLang = localStorage.getItem('cs_lang');
+  if (savedLang === 'en' || savedLang === 'ar') lang = savedLang;
+} catch {}
 updateLang();
+
+function getDateKey() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function saveDailyState() {
+  const key = getDateKey();
+  try {
+    localStorage.setItem(`cs_goal_${key}`, String(goal));
+    localStorage.setItem(`cs_current_${key}`, String(current));
+  } catch {}
+}
+
+function loadDailyState() {
+  const key = getDateKey();
+  try {
+    const g = Number(localStorage.getItem(`cs_goal_${key}`) || '0');
+    const c = Number(localStorage.getItem(`cs_current_${key}`) || '0');
+    if (g > 0) {
+      goal = g;
+      current = Math.min(c, g);
+      document.getElementById('goalDisplay').textContent = `${texts[lang].goalText} ${goal} kcal`;
+      const pc = document.getElementById('progressContainer');
+      pc.style.display = 'block';
+      const bar = document.getElementById('calorieBar');
+      bar.max = Math.max(goal, 1);
+      bar.value = current;
+      document.getElementById('progressText').textContent = `${current} / ${goal} kcal`;
+    }
+  } catch {}
+}
+loadDailyState();
 
 /* --- Calorie goal logic --- */
 document.getElementById('userForm').addEventListener('submit', async (e) => {
@@ -585,6 +629,7 @@ document.getElementById('userForm').addEventListener('submit', async (e) => {
     document.getElementById('calorieBar').max = Math.max(goal, 1);
     document.getElementById('calorieBar').value = current;
     document.getElementById('progressText').textContent = `${current} / ${goal} kcal`;
+    saveDailyState();
 
     // update macro targets if provided by n8n
     proteinGoalTarget = Number(result.proteinGoal) || 0;
@@ -615,6 +660,7 @@ document.getElementById('addCaloriesBtn').addEventListener('click', () => {
   document.getElementById('calorieBar').value = current;
   document.getElementById('progressText').textContent = `${current} / ${goal} kcal`;
   input.value = "";
+  saveDailyState();
 });
 
 /* --- Upload image --- */
@@ -644,6 +690,7 @@ document.getElementById('sendImage').addEventListener('click', async () => {
 
     const status = document.getElementById('uploadStatus');
     if (status) { status.textContent = texts[lang].uploadSuccess; status.className = 'uploadStatus success'; }
+    saveDailyState();
   } catch (err) {
     alert('Error uploading image.');
   } finally {
