@@ -417,7 +417,7 @@
 
         <!-- Upload row -->
         <div class="uploadRow">
-          <input type="file" id="mealImage" accept="image/*" />
+          <input type="file" id="imageUpload" accept="image/*" />
           <button id="uploadBtn" type="button" aria-label="Upload">⬆ Add a photo</button>
           <button id="sendImage" class="circleBtn" type="button" aria-label="Send">➤</button>
         </div>
@@ -684,11 +684,12 @@ document.getElementById('addCaloriesBtn').addEventListener('click', () => {
 
 /* --- Upload image --- */
 document.getElementById('sendImage').addEventListener('click', async () => {
-  const file = document.getElementById('mealImage').files[0];
-  if (!file) return alert(lang === 'en' ? 'Upload an image first' : 'قم برفع صورة أولاً');
+  const fileInput = document.getElementById('imageUpload');
+  const file = fileInput && fileInput.files[0];
+  if (!file) return alert(lang === 'en' ? 'Please select an image first.' : 'الرجاء اختيار صورة أولاً.');
 
   const formData = new FormData();
-  formData.append('image', file);
+  formData.append('file', file);
   formData.append('goal', goal);
   formData.append('current', current);
 
@@ -727,13 +728,13 @@ document.getElementById('sendImage').addEventListener('click', async () => {
 const uploadBtn = document.getElementById('uploadBtn');
 if (uploadBtn) {
   uploadBtn.addEventListener('click', () => {
-    const fileInput = document.getElementById('mealImage');
+    const fileInput = document.getElementById('imageUpload');
     if (fileInput) fileInput.click();
   });
 }
 
 /* --- Show selected image + status --- */
-const mealInput = document.getElementById('mealImage');
+const mealInput = document.getElementById('imageUpload');
 if (mealInput) {
   mealInput.addEventListener('change', () => {
     const file = mealInput.files && mealInput.files[0];
