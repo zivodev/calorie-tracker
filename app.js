@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadingBar = document.getElementById("loadingBar");
   const tabButtons = document.querySelectorAll(".tabBtn");
   const pages = document.querySelectorAll(".page");
+  const mediaPanel = document.querySelector(".mediaPanel");
   const macroMiniValue = {
     protein: document.getElementById("proteinMiniValue"),
     carbs: document.getElementById("carbsMiniValue"),
@@ -388,6 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
     imageInput.value = "";
     uploadFileName = "";
     uploadState = "idle";
+    mediaPanel?.classList.remove("has-photo");
     renderUploadStatus();
     updateCircleProgress();
     updateMacroUI();
@@ -415,6 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
       uploadFileName = "";
       uploadState = "idle";
       renderUploadStatus();
+      mediaPanel?.classList.remove("has-photo");
       return;
     }
     const reader = new FileReader();
@@ -425,6 +428,9 @@ document.addEventListener("DOMContentLoaded", () => {
       uploadFileName = file.name;
       uploadState = "ready";
       renderUploadStatus();
+      if (result) {
+        mediaPanel?.classList.add("has-photo");
+      }
     };
     reader.readAsDataURL(file);
   };

@@ -318,21 +318,27 @@ body::after {
 }
 
 .tabBar {
-  position: sticky;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
   bottom: 0;
-  margin-top: 32px;
+  margin: 0;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: clamp(12px, 3vw, 28px);
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 12px;
+  border-radius: 0;
+  padding: 18px clamp(28px, 6vw, 96px);
   box-shadow: 0 15px 45px rgba(15, 23, 42, 0.15);
   z-index: 5;
+  width: 100vw;
+  box-sizing: border-box;
 }
 
 .tabBtn {
-  flex: 1;
+  flex: 1 1 0;
+  max-width: 220px;
   background: none;
   border: none;
   border-radius: 18px;
@@ -466,6 +472,7 @@ body::after {
   padding: 32px;
   text-align: center;
   align-items: center;
+  position: relative;
 }
 
 .mediaPanel > * {
@@ -484,6 +491,20 @@ body::after {
   align-items: center;
   gap: 12px;
   text-align: center;
+}
+
+.mediaPanel:not(.has-photo) .uploadInfo,
+.mediaPanel:not(.has-photo) #sendImage,
+.mediaPanel:not(.has-photo) #imageInfoContainer {
+  display: none;
+}
+
+#mealImage {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
 }
 
 #imagePreview {
@@ -512,15 +533,7 @@ body::after {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-}
-
-.uploadRow input[type="file"] {
-  flex: 1 1 220px;
-  background: var(--card);
-  border: 1px dashed rgba(196, 122, 63, 0.35);
-  border-radius: 18px;
-  padding: 11px 14px;
-  color: var(--text-muted);
+  justify-content: center;
 }
 
 .uploadRow button {
@@ -534,6 +547,34 @@ body::after {
 #uploadBtn {
   background: rgba(196, 122, 63, 0.15);
   color: var(--accent);
+}
+
+#imageInfoContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#imageInfo {
+  width: min(420px, 100%);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: 12px 14px;
+}
+
+.captureBtn {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: #0f0704;
+  box-shadow: 0 18px 35px rgba(196, 122, 63, 0.45);
+  font-size: 1.35rem;
+}
+
+.captureBtn:hover {
+  transform: translateY(-3px) scale(1.02);
 }
 
 .circleBtn {
@@ -561,15 +602,6 @@ body::after {
 
 .manualAdd input {
   flex: 1;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--text);
-  padding: 12px 14px;
-}
-
-#imageInfo {
-  width: 100%;
   border-radius: 18px;
   border: 1px solid var(--border);
   background: var(--card);
@@ -735,12 +767,7 @@ body::after {
   }
 
   .tabBar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 16px;
-    margin: 0 auto;
-    width: min(460px, calc(100% - 24px));
+    padding: 16px clamp(18px, 8vw, 40px);
   }
 }
 
