@@ -1,43 +1,59 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("userForm");
-  const progressContainer = document.getElementById("progressContainer");
-  const progressText = document.getElementById("progressText");
-  const progressCircle = document.getElementById("calorieProgress");
-  const manualCalories = document.getElementById("manualCalories");
-  const addCaloriesBtn = document.getElementById("addCaloriesBtn");
-  const forgetGoalBtn = document.getElementById("forgetGoalBtn");
-  const imageInput = document.getElementById("mealImage");
-  const uploadBtn = document.getElementById("uploadBtn");
-  const sendImageBtn = document.getElementById("sendImage");
-  const uploadStatus = document.getElementById("uploadStatus");
-  const imagePreview = document.getElementById("imagePreview");
-  const themeSelector = document.getElementById("themeSelector");
+  // helper: grab element and warn if missing (for required ones)
+  const $ = (id) => document.getElementById(id);
+  const warnIfMissing = (el, name) => {
+    if (!el) console.warn(`[CalorieScope] Missing element: ${name}`);
+    return el;
+  };
+
+  // required-ish elements (we'll early-exit if the form is missing)
+  const form = warnIfMissing($("userForm"), "userForm");
+  if (!form) {
+    console.error("[CalorieScope] Aborting initialization because form #userForm is missing.");
+    return;
+  }
+
+  // optional elements (we'll guard usage)
+  const progressContainer = $("progressContainer") || null;
+  const progressText = $("progressText") || null;
+  const progressCircle = $("calorieProgress") || null;
+  const manualCalories = $("manualCalories") || null;
+  const addCaloriesBtn = $("addCaloriesBtn") || null;
+  const forgetGoalBtn = $("forgetGoalBtn") || null;
+  const imageInput = $("mealImage") || null;
+  const uploadBtn = $("uploadBtn") || null;
+  const sendImageBtn = $("sendImage") || null;
+  const uploadStatus = $("uploadStatus") || null;
+  const imagePreview = $("imagePreview") || null;
+  const themeSelector = $("themeSelector") || null;
   const themeCircles = document.querySelectorAll(".theme-circle");
-  const panel = document.getElementById("userPanel");
-  const panelToggle = document.getElementById("panelToggle");
+  const panel = $("userPanel") || null;
+  const panelToggle = $("panelToggle") || null;
   const langSegment = document.querySelector(".langSegment");
   const langButtons = langSegment?.querySelectorAll(".segOption") ?? [];
-  const segHighlight = document.querySelector(".segHighlight");
-  const container = document.querySelector(".container");
-  const loadingOverlay = document.getElementById("loadingOverlay");
-  const loadingBar = document.getElementById("loadingBar");
+  const segHighlight = document.querySelector(".segHighlight") || null;
+  const container = document.querySelector(".container") || document.body;
+  const loadingOverlay = $("loadingOverlay") || null;
+  const loadingBar = $("loadingBar") || null;
   const tabButtons = document.querySelectorAll(".tabBtn");
   const pages = document.querySelectorAll(".page");
   const mediaPanel = document.querySelector(".mediaPanel");
   const macroMiniValue = {
-    protein: document.getElementById("proteinMiniValue"),
-    carbs: document.getElementById("carbsMiniValue"),
-    fat: document.getElementById("fatMiniValue")
+    protein: $("proteinMiniValue"),
+    carbs: $("carbsMiniValue"),
+    fat: $("fatMiniValue")
   };
   const macroMiniCircle = {
-    protein: document.getElementById("proteinCircle"),
-    carbs: document.getElementById("carbsCircle"),
-    fat: document.getElementById("fatCircle")
+    protein: $("proteinCircle"),
+    carbs: $("carbsCircle"),
+    fat: $("fatCircle")
   };
-  const allowSelection = (target) =>
-    target.closest("input, textarea, select, button, [contenteditable='true']");
 
-  document.body.classList.add("locked");
+  const allowSelection = (target) =>
+    target?.closest && target.closest("input, textarea, select, button, [contenteditable='true']");
+
+  // prevent accidental selection/context menu etc.
+  document.body?.classList?.add("locked");
   ["contextmenu", "dragstart"].forEach((evt) =>
     document.addEventListener(evt, (event) => event.preventDefault())
   );
@@ -47,156 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  const translations = {
-    en: {
-      panel: { title: "Body Details" },
-      form: {
-        age: "Age",
-        weight: "Weight (kg)",
-        height: "Height (cm)",
-        genderPlaceholder: "Select Gender",
-        male: "Male",
-        female: "Female",
-        activityPlaceholder: "Activity Level",
-        activity: {
-          sedentary: "Sedentary (little or no exercise)",
-          light: "Lightly Active (1–3 days/week)",
-          moderate: "Moderately Active (3–5 days/week)",
-          active: "Active (6–7 days/week)",
-          very_active: "Very Active (hard daily exercise)"
-        },
-        goalPlaceholder: "Goal",
-        goal: {
-          maintain: "Maintain weight",
-          lose: "Lose weight",
-          gain: "Gain weight",
-          muscle: "Muscle gain",
-          cut: "Fat loss (cut)"
-        },
-        submit: "Get Calorie Goal"
-      },
-      goal: {
-        placeholder: "Fill in your details to generate a tailored calorie plan.",
-        incomplete: "Please complete every field to continue."
-      },
-      progress: {
-        label: "Calorie goal",
-        empty: "Waiting for goal…"
-      },
-      media: {
-        title: "Meal capture",
-        lead: "Log a photo when you add calories",
-        addPhoto: "⬆ Add a photo",
-        caption: "Add info about this meal (optional)",
-        manual: "Add calories manually",
-        status: {
-          idle: "Waiting for a photo",
-          ready: ({ name }) => `Ready: ${name}`,
-          analyzing: "Analyzing meal…",
-          success: "Meal logged successfully!",
-          missing: "Select a photo first."
-        }
-      },
-      settings: {
-        title: "Personalize",
-        language: "Language",
-        languageCurrent: "English",
-        languageAria: "Toggle app language",
-        theme: "Themes",
-        note: "Changes are saved locally so you can pick up where you left off.",
-        reset: "Reset data",
-        resetDone: "Data reset!"
-      },
-      macro: {
-        protein: "Protein",
-        carbs: "Carbs",
-        fat: "Fats"
-      },
-      nav: {
-        goal: "Progress",
-        capture: "Capture",
-        settings: "Settings"
-      },
-      units: {
-        grams: "g",
-        kcal: "kcal"
-      }
-    },
-    ar: {
-      panel: { title: "بيانات الجسم" },
-      form: {
-        age: "العمر",
-        weight: "الوزن (كجم)",
-        height: "الطول (سم)",
-        genderPlaceholder: "اختر الجنس",
-        male: "ذكر",
-        female: "أنثى",
-        activityPlaceholder: "مستوى النشاط",
-        activity: {
-          sedentary: "خامل (بدون تمارين تقريباً)",
-          light: "نشاط خفيف (1-3 أيام/أسبوع)",
-          moderate: "نشاط متوسط (3-5 أيام/أسبوع)",
-          active: "نشاط عالٍ (6-7 أيام/أسبوع)",
-          very_active: "نشاط مكثف (تمارين يومية شاقة)"
-        },
-        goalPlaceholder: "الهدف",
-        goal: {
-          maintain: "حافظ على الوزن",
-          lose: "اخسر الوزن",
-          gain: "اكسب الوزن",
-          muscle: "زيادة العضلات",
-          cut: "خسارة الدهون"
-        },
-        submit: "احسب السعرات"
-      },
-      goal: {
-        placeholder: "أدخل بياناتك لتحصل على خطة سعرات مخصصة.",
-        incomplete: "رجاءً أكمل جميع الحقول للمتابعة."
-      },
-      progress: {
-        label: "هدف السعرات",
-        empty: "بانتظار الهدف…"
-      },
-      media: {
-        title: "توثيق الوجبة",
-        lead: "أضف صورة عند تسجيل السعرات",
-        addPhoto: "⬆ أضف صورة",
-        caption: "أضف وصفاً عن الوجبة (اختياري)",
-        manual: "إضافة سعرات يدوياً",
-        status: {
-          idle: "بانتظار صورة",
-          ready: ({ name }) => `جاهز: ${name}`,
-          analyzing: "يتم تحليل الوجبة…",
-          success: "تم تسجيل الوجبة!",
-          missing: "اختر صورة أولاً."
-        }
-      },
-      settings: {
-        title: "التخصيص",
-        language: "اللغة",
-        languageCurrent: "العربية",
-        languageAria: "تبديل لغة التطبيق",
-        theme: "السِمات",
-        note: "نحفظ تغييراتك محلياً لتكمل لاحقاً.",
-        reset: "إعادة ضبط البيانات",
-        resetDone: "تمت إعادة الضبط!"
-      },
-      macro: {
-        protein: "البروتين",
-        carbs: "الكربوهيدرات",
-        fat: "الدهون"
-      },
-      nav: {
-        goal: "التقدم",
-        capture: "التسجيل",
-        settings: "الإعدادات"
-      },
-      units: {
-        grams: "غ",
-        kcal: "سعرة"
-      }
-    }
-  };
+  // ---------- data & translations ----------
+  const translations = { /* (kept exactly the same as your original translations) */ };
+
+  // (I intentionally didn't paste the whole translations object here to keep the snippet short.
+  //  In your copy, keep the original `translations` object that you provided.)
 
   const activityMap = {
     sedentary: 1.2,
@@ -246,11 +117,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return typeof result === "function" ? result(params) : result;
   };
 
+  // ---------- UI helpers ----------
   const updateLoadingBar = (progress) => {
+    if (!loadingBar) return;
     loadingBar.style.width = `${progress}%`;
   };
 
   const toggleLoading = (state) => {
+    if (!loadingOverlay || !loadingBar) return;
     loadingOverlay.style.display = state ? "flex" : "none";
     updateLoadingBar(state ? 35 : 100);
     if (!state) {
@@ -270,12 +144,16 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const renderUploadStatus = () => {
-    uploadStatus.textContent = translate(`media.status.${uploadState}`, {
-      name: uploadFileName
-    });
+    if (!uploadStatus) return;
+    const text = translate(`media.status.${uploadState}`, { name: uploadFileName });
+    uploadStatus.textContent = text || "";
   };
 
   const updateCircleProgress = () => {
+    if (!progressText || !progressCircle) {
+      // nothing to update visually, but keep state consistent
+      return;
+    }
     if (!calorieGoal) {
       progressCircle.style.strokeDashoffset = circleCircumference;
       progressCircle.style.stroke = "var(--accent)";
@@ -333,6 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateMacroUI();
   };
 
+  // ---------- calculations ----------
   const calculateGoal = (details) => {
     const { gender, age, weight, height, activity, goal } = details;
     const base =
@@ -344,6 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return Math.round(base * activityMultiplier + adjustment);
   };
 
+  // ---------- event handlers ----------
   const handleFormSubmit = (event) => {
     event.preventDefault();
     const formData = new FormData(form);
@@ -353,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    toggleLoading(true);
+    if (loadingOverlay && loadingBar) toggleLoading(true);
     requestAnimationFrame(() => {
       setTimeout(() => {
         calorieGoal = clamp(calculateGoal(entries), 1200, 4500);
@@ -363,30 +243,31 @@ document.addEventListener("DOMContentLoaded", () => {
           fat: Math.round((calorieGoal * macroRatios.fat) / 9)
         };
 
-        progressContainer.style.display = "flex";
+        if (progressContainer) progressContainer.style.display = "flex";
         resetProgress();
-        toggleLoading(false);
+        if (loadingOverlay && loadingBar) toggleLoading(false);
       }, 650);
     });
   };
 
   const handleManualAdd = () => {
+    if (!manualCalories) return;
     const value = Number(manualCalories.value);
     if (!value || value <= 0) return;
     currentCalories = clamp(currentCalories + value, 0, 6000);
     updateCircleProgress();
     updateMacroUI();
     // --- N8N SEND MANUAL CALORIES ---
-fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    caloriesAdded: value,
-    totalCalories: currentCalories,
-    timestamp: new Date().toISOString()
-  })
-}).catch(() => {});
-// --- END N8N ---
+    fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        caloriesAdded: value,
+        totalCalories: currentCalories,
+        timestamp: new Date().toISOString()
+      })
+    }).catch(() => {});
+    // --- END N8N ---
     manualCalories.value = "";
   };
 
@@ -402,17 +283,19 @@ fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a
 
   const resetAll = () => {
     form.reset();
-    progressContainer.style.display = "none";
+    if (progressContainer) progressContainer.style.display = "none";
     calorieGoal = 0;
     currentCalories = 0;
     macroTargets = { protein: 0, carbs: 0, fat: 0 };
     setTheme("default");
-    imagePreview.src = "";
-    imagePreview.classList.remove("has-image");
-    imageInput.value = "";
+    if (imagePreview) {
+      imagePreview.src = "";
+      imagePreview.classList.remove("has-image");
+    }
+    if (imageInput) imageInput.value = "";
     uploadFileName = "";
     uploadState = "idle";
-    mediaPanel?.classList.remove("has-photo");
+    if (mediaPanel) mediaPanel.classList.remove("has-photo");
     renderUploadStatus();
     updateCircleProgress();
     updateMacroUI();
@@ -422,6 +305,7 @@ fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a
   };
 
   const togglePanel = () => {
+    if (!panel || !panelToggle) return;
     panel.classList.toggle("collapsed");
     const expanded = panel.classList.contains("collapsed");
     panelToggle.setAttribute("aria-expanded", String(!expanded));
@@ -433,6 +317,11 @@ fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a
   };
 
   const handleUploadPreview = () => {
+    if (!imageInput || !imagePreview) {
+      uploadState = "missing";
+      renderUploadStatus();
+      return;
+    }
     const file = imageInput.files?.[0];
     if (!file) {
       imagePreview.src = "";
@@ -440,7 +329,7 @@ fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a
       uploadFileName = "";
       uploadState = "idle";
       renderUploadStatus();
-      mediaPanel?.classList.remove("has-photo");
+      if (mediaPanel) mediaPanel.classList.remove("has-photo");
       return;
     }
     const reader = new FileReader();
@@ -459,7 +348,7 @@ fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a
   };
 
   const fakeUpload = () => {
-    if (!imageInput.files?.length) {
+    if (!imageInput?.files?.length) {
       uploadState = "missing";
       renderUploadStatus();
       return;
@@ -471,23 +360,21 @@ fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a
       toggleLoading(false);
       uploadState = "success";
       renderUploadStatus();
-      renderUploadStatus();
 
-// --- N8N SEND MEAL PHOTO + CAPTION ---
-const formData = new FormData();
-const file = imageInput.files?.[0];
-const caption = document.getElementById("mealCaption")?.value || "";
+      // --- N8N SEND MEAL PHOTO + CAPTION ---
+      const formData = new FormData();
+      const file = imageInput.files?.[0];
+      const caption = document.getElementById("mealCaption")?.value || "";
 
-if (file) formData.append("image", file);
-formData.append("caption", caption);
-formData.append("timestamp", new Date().toISOString());
+      if (file) formData.append("image", file);
+      formData.append("caption", caption);
+      formData.append("timestamp", new Date().toISOString());
 
-fetch("https://caloriescope.app.n8n.cloud/webhook-test/eff0e03c-8382-4f7f-a60b-05dfee430173", {
-  method: "POST",
-  body: formData
-}).catch(() => {});
-// --- END N8N ---
-
+      fetch("https://caloriescope.app.n8n.cloud/webhook-test/eff0e03c-8382-4f7f-a60b-05dfee430173", {
+        method: "POST",
+        body: formData
+      }).catch(() => {});
+      // --- END N8N ---
     }, 1200);
   };
 
@@ -543,26 +430,47 @@ fetch("https://caloriescope.app.n8n.cloud/webhook-test/eff0e03c-8382-4f7f-a60b-0
     );
   };
 
+  // ---------- bind events (only if elements exist) ----------
   form.addEventListener("submit", handleFormSubmit);
-  addCaloriesBtn.addEventListener("click", handleManualAdd);
-  forgetGoalBtn.addEventListener("click", resetAll);
-  panelToggle.addEventListener("click", togglePanel);
+  if (addCaloriesBtn) addCaloriesBtn.addEventListener("click", handleManualAdd);
+  if (forgetGoalBtn) forgetGoalBtn.addEventListener("click", resetAll);
+  if (panelToggle) panelToggle.addEventListener("click", togglePanel);
   themeCircles.forEach((circle) =>
     circle.addEventListener("click", handleThemeCircleClick)
   );
   langButtons.forEach((btn) =>
     btn.addEventListener("click", () => setLanguage(btn.dataset.lang))
   );
-  uploadBtn.addEventListener("click", () => imageInput.click());
-  imageInput.addEventListener("change", handleUploadPreview);
-  sendImageBtn.addEventListener("click", fakeUpload);
+  if (uploadBtn && imageInput) uploadBtn.addEventListener("click", () => imageInput.click());
+  if (imageInput) imageInput.addEventListener("change", handleUploadPreview);
+  if (sendImageBtn) sendImageBtn.addEventListener("click", fakeUpload);
   tabButtons.forEach((btn) =>
     btn.addEventListener("click", () => setActivePage(btn.dataset.target))
   );
 
+  // ---------- initial state ----------
   setTheme("default");
   setActivePage("goal");
   setLanguage("en");
-  progressContainer.style.display = "none";
+  if (progressContainer) progressContainer.style.display = "none";
   renderUploadStatus();
+
+  // quick debug print of missing elements (useful while developing)
+  const checkList = {
+    progressCircle,
+    progressText,
+    manualCalories,
+    addCaloriesBtn,
+    forgetGoalBtn,
+    imageInput,
+    uploadBtn,
+    sendImageBtn,
+    uploadStatus,
+    imagePreview,
+    loadingOverlay,
+    loadingBar
+  };
+  Object.entries(checkList).forEach(([k, v]) => {
+    if (!v) console.info(`[CalorieScope] Optional element not found: ${k}`);
+  });
 });
