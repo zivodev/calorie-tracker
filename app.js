@@ -376,6 +376,17 @@ document.addEventListener("DOMContentLoaded", () => {
     currentCalories = clamp(currentCalories + value, 0, 6000);
     updateCircleProgress();
     updateMacroUI();
+    // --- N8N SEND MANUAL CALORIES ---
+fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    caloriesAdded: value,
+    totalCalories: currentCalories,
+    timestamp: new Date().toISOString()
+  })
+}).catch(() => {});
+// --- END N8N ---
     manualCalories.value = "";
   };
 
@@ -460,6 +471,23 @@ document.addEventListener("DOMContentLoaded", () => {
       toggleLoading(false);
       uploadState = "success";
       renderUploadStatus();
+      renderUploadStatus();
+
+// --- N8N SEND MEAL PHOTO + CAPTION ---
+const formData = new FormData();
+const file = imageInput.files?.[0];
+const caption = document.getElementById("mealCaption")?.value || "";
+
+if (file) formData.append("image", file);
+formData.append("caption", caption);
+formData.append("timestamp", new Date().toISOString());
+
+fetch("https://caloriescope.app.n8n.cloud/webhook-test/eff0e03c-8382-4f7f-a60b-05dfee430173", {
+  method: "POST",
+  body: formData
+}).catch(() => {});
+// --- END N8N ---
+
     }, 1200);
   };
 
