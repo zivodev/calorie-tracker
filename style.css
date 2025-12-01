@@ -104,20 +104,21 @@ body::after {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: left;
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: 10px;
+  margin-bottom: 0;
 }
 
 .container[dir="rtl"] .brand {
   flex-direction: row-reverse;
+  justify-content: flex-end;
   text-align: right;
 }
 
 .brand img {
-  width: clamp(72px, 9vw, 92px);
-  height: clamp(72px, 9vw, 92px);
+  width: clamp(48px, 6vw, 64px);
+  height: clamp(48px, 6vw, 64px);
   border-radius: 50%;
   padding: 0;
   background: transparent;
@@ -125,10 +126,42 @@ body::after {
 }
 
 .brand-title {
-  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
   font-weight: 700;
   letter-spacing: 0.03em;
 }
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.container[dir="rtl"] .topBar {
+  flex-direction: row-reverse;
+}
+
+.formFab {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-strong);
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+.formFabIcon {
+  display: inline-flex;
+}
+
+
 
 .pages {
   position: relative;
@@ -146,6 +179,36 @@ body::after {
   display: flex;
 }
 
+.captureFab {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 56px;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  background: radial-gradient(circle at top, var(--accent-strong), var(--accent));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #120805;
+  font-weight: 700;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65);
+  cursor: pointer;
+  z-index: 6;
+}
+
+.captureFabIcon {
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.captureFab:active {
+  transform: translateX(-50%) translateY(2px) scale(0.98);
+}
+
 .container[dir="rtl"] .tabBar {
   direction: rtl;
 }
@@ -158,29 +221,13 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 18px;
   background: var(--surface);
   padding: 16px 20px;
   border-radius: 24px;
   border: 1px solid var(--border);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-}
-
-.theme-selector {
-  flex-wrap: nowrap;
-}
-
-.theme-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 16px;
-  background: rgba(196, 122, 63, 0.12);
-  color: var(--accent-strong);
-  flex-shrink: 0;
 }
 
 .theme-list {
@@ -194,26 +241,37 @@ body::after {
   display: flex;
   gap: 12px;
   justify-content: center;
+  align-items: center;
 }
 
-.container[dir="rtl"] .theme-selector {
-  flex-direction: row-reverse;
+.theme-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(196, 122, 63, 0.16);
+  font-size: 0.95rem;
+  flex-shrink: 0;
 }
 
-.container[dir="rtl"] .theme-list {
-  align-items: flex-end;
+.theme-icon-dark {
+  color: var(--accent-strong);
 }
 
-.container[dir="rtl"] .theme-icon {
-  margin-left: 0;
+.theme-icon-light {
+  color: var(--accent);
 }
 
-.theme-row-dark {
-  flex-wrap: wrap;
-}
-
+.theme-row-dark,
 .theme-row-light {
   flex-wrap: wrap;
+}
+
+.container[dir="rtl"] .theme-row-dark,
+.container[dir="rtl"] .theme-row-light {
+  flex-direction: row-reverse;
 }
 
 .theme-circle {
@@ -278,6 +336,41 @@ body::after {
   overflow: hidden;
   margin-bottom: 24px;
   box-shadow: inset 0 1px rgba(255, 255, 255, 0.05);
+}
+
+#userPanel {
+  position: fixed;
+  top: 96px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, calc(100vw - 40px));
+  z-index: 30;
+  opacity: 0;
+  transform: translateX(-50%) translateY(12px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#userPanel.open {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+#formOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  z-index: 25;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+#formOverlay.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .panelHeader {
@@ -443,8 +536,14 @@ body::after {
   transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;
 }
 
+body[data-theme="dawn"] .circleFg,
+body[data-theme="ocean"] .circleFg,
+body[data-theme="meadow"] .circleFg {
+  stroke: #1f2937;
+}
+
 .circleCenter {
-  margin-top: -120px;
+  margin-top: -110px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -462,24 +561,38 @@ body::after {
 
 .macroOrbit {
   display: flex;
-  gap: clamp(12px, 2vw, 28px);
-  justify-content: center;
-  flex-wrap: wrap;
+  gap: clamp(12px, 2vw, 24px);
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: nowrap;
   width: 100%;
+  padding-inline: 4px;
+  box-sizing: border-box;
+  overflow-x: auto;
 }
 
 .microCircle {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  min-width: 92px;
+  gap: 4px;
+  min-width: 80px;
+  flex: 1 1 0;
 }
 
 .microCircle svg {
-  width: 72px;
-  height: 72px;
+  width: 54px;
+  height: 54px;
   transform: rotate(-90deg);
+}
+
+.macroCard {
+  margin-top: 12px;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 10px 14px;
+  box-sizing: border-box;
 }
 
 .microBg {
@@ -502,6 +615,18 @@ body::after {
 
 .microFg.fat {
   stroke: #facc15;
+}
+
+body[data-theme="dawn"] .microBg,
+body[data-theme="ocean"] .microBg,
+body[data-theme="meadow"] .microBg {
+  stroke: rgba(15, 23, 42, 0.12);
+}
+
+body[data-theme="dawn"] .microFg.protein,
+body[data-theme="ocean"] .microFg.protein,
+body[data-theme="meadow"] .microFg.protein {
+  stroke: #1f2937;
 }
 
 .microValue {
@@ -788,7 +913,8 @@ body::after {
   position: absolute;
   top: 4px;
   bottom: 4px;
-  width: calc(50% - 4px);
+  left: 4px;
+  width: calc(50% - 8px);
   background: rgba(14, 165, 233, 0.12);
   transform: translateX(0);
   transition: transform 0.25s ease;

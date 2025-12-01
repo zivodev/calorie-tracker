@@ -38,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const tabButtons = document.querySelectorAll(".tabBtn");
   const pages = document.querySelectorAll(".page");
   const mediaPanel = document.querySelector(".mediaPanel");
+  const formFab = $("formFab") || null;
+  const formOverlay = $("formOverlay") || null;
   const macroMiniValue = {
     protein: $("proteinMiniValue"),
     carbs: $("carbsMiniValue"),
@@ -73,10 +75,156 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ---------- data & translations ----------
-  const translations = { /* (kept exactly the same as your original translations) */ };
-
-  // (I intentionally didn't paste the whole translations object here to keep the snippet short.
-  //  In your copy, keep the original `translations` object that you provided.)
+  const translations = {
+    en: {
+      panel: { title: "Body Details" },
+      form: {
+        age: "Age",
+        weight: "Weight (kg)",
+        height: "Height (cm)",
+        genderPlaceholder: "Select Gender",
+        male: "Male",
+        female: "Female",
+        activityPlaceholder: "Activity Level",
+        activity: {
+          sedentary: "Sedentary (little or no exercise)",
+          light: "Lightly Active (1–3 days/week)",
+          moderate: "Moderately Active (3–5 days/week)",
+          active: "Active (6–7 days/week)",
+          very_active: "Very Active (hard daily exercise)"
+        },
+        goalPlaceholder: "Goal",
+        goal: {
+          maintain: "Maintain weight",
+          lose: "Lose weight",
+          gain: "Gain weight",
+          muscle: "Muscle gain",
+          cut: "Fat loss (cut)"
+        },
+        submit: "Get Calorie Goal"
+      },
+      goal: {
+        placeholder: "Fill in your details to generate a tailored calorie plan.",
+        incomplete: "Please complete every field to continue."
+      },
+      progress: {
+        label: "Calorie goal",
+        empty: "Waiting for goal…"
+      },
+      media: {
+        title: "Meal capture",
+        lead: "Log a photo when you add calories",
+        addPhoto: "⬆ Add a photo",
+        caption: "Add info about this meal (optional)",
+        manual: "Add calories manually",
+        status: {
+          idle: "Waiting for a photo",
+          ready: ({ name }) => `Ready: ${name}`,
+          analyzing: "Analyzing meal…",
+          success: "Meal logged successfully!",
+          missing: "Select a photo first."
+        }
+      },
+      settings: {
+        title: "Personalize",
+        language: "Language",
+        languageCurrent: "English",
+        languageAria: "Toggle app language",
+        theme: "Themes",
+        note: "Changes are saved locally so you can pick up where you left off.",
+        reset: "Reset data",
+        resetDone: "Data reset!"
+      },
+      macro: {
+        protein: "Protein",
+        carbs: "Carbs",
+        fat: "Fats"
+      },
+      nav: {
+        goal: "Progress",
+        capture: "Capture",
+        settings: "Settings"
+      },
+      units: {
+        grams: "g",
+        kcal: "kcal"
+      }
+    },
+    ar: {
+      panel: { title: "بيانات الجسم" },
+      form: {
+        age: "العمر",
+        weight: "الوزن (كجم)",
+        height: "الطول (سم)",
+        genderPlaceholder: "اختر الجنس",
+        male: "ذكر",
+        female: "أنثى",
+        activityPlaceholder: "مستوى النشاط",
+        activity: {
+          sedentary: "خامل (بدون تمارين تقريباً)",
+          light: "نشاط خفيف (1-3 أيام/أسبوع)",
+          moderate: "نشاط متوسط (3-5 أيام/أسبوع)",
+          active: "نشاط عالٍ (6-7 أيام/أسبوع)",
+          very_active: "نشاط مكثف (تمارين يومية شاقة)"
+        },
+        goalPlaceholder: "الهدف",
+        goal: {
+          maintain: "حافظ على الوزن",
+          lose: "اخسر الوزن",
+          gain: "اكسب الوزن",
+          muscle: "زيادة العضلات",
+          cut: "خسارة الدهون"
+        },
+        submit: "احسب السعرات"
+      },
+      goal: {
+        placeholder: "أدخل بياناتك لتحصل على خطة سعرات مخصصة.",
+        incomplete: "رجاءً أكمل جميع الحقول للمتابعة."
+      },
+      progress: {
+        label: "هدف السعرات",
+        empty: "بانتظار الهدف…"
+      },
+      media: {
+        title: "توثيق الوجبة",
+        lead: "أضف صورة عند تسجيل السعرات",
+        addPhoto: "⬆ أضف صورة",
+        caption: "أضف وصفاً عن الوجبة (اختياري)",
+        manual: "إضافة سعرات يدوياً",
+        status: {
+          idle: "بانتظار صورة",
+          ready: ({ name }) => `جاهز: ${name}`,
+          analyzing: "يتم تحليل الوجبة…",
+          success: "تم تسجيل الوجبة!",
+          missing: "اختر صورة أولاً."
+        }
+      },
+      settings: {
+        title: "التخصيص",
+        language: "اللغة",
+        languageCurrent: "العربية",
+        languageAria: "تبديل لغة التطبيق",
+        theme: "السِمات",
+        note: "نحفظ تغييراتك محلياً لتكمل لاحقاً.",
+        reset: "إعادة ضبط البيانات",
+        resetDone: "تمت إعادة الضبط!"
+      },
+      macro: {
+        protein: "البروتين",
+        carbs: "الكربوهيدرات",
+        fat: "الدهون"
+      },
+      nav: {
+        goal: "التقدم",
+        capture: "التسجيل",
+        settings: "الإعدادات"
+      },
+      units: {
+        grams: "غ",
+        kcal: "سعرة"
+      }
+    }
+  };
 
   const activityMap = {
     sedentary: 1.2,
@@ -255,6 +403,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (progressContainer) progressContainer.style.display = "flex";
         resetProgress();
         if (loadingOverlay && loadingBar) toggleLoading(false);
+        // close the floating form after goal is generated
+        closeFormModal();
       }, 650);
     });
   };
@@ -318,11 +468,25 @@ document.addEventListener("DOMContentLoaded", () => {
     resetFeedbackTimer = setTimeout(() => setResetFeedback(false), 2200);
   };
 
+  const openFormModal = () => {
+    if (!panel) return;
+    panel.classList.add("open");
+    if (formOverlay) formOverlay.classList.add("visible");
+  };
+
+  const closeFormModal = () => {
+    if (!panel) return;
+    panel.classList.remove("open");
+    if (formOverlay) formOverlay.classList.remove("visible");
+  };
+
   const togglePanel = () => {
-    if (!panel || !panelToggle) return;
-    panel.classList.toggle("collapsed");
-    const expanded = panel.classList.contains("collapsed");
-    panelToggle.setAttribute("aria-expanded", String(!expanded));
+    if (!panel) return;
+    if (panel.classList.contains("open")) {
+      closeFormModal();
+    } else {
+      openFormModal();
+    }
   };
 
   const handleThemeCircleClick = (event) => {
@@ -443,6 +607,8 @@ document.addEventListener("DOMContentLoaded", () => {
     applyTranslations();
   };
 
+  const captureFab = $("captureFab") || null;
+
   const setActivePage = (target) => {
     pages.forEach((page) =>
       page.classList.toggle("active", page.dataset.page === target)
@@ -450,6 +616,9 @@ document.addEventListener("DOMContentLoaded", () => {
     tabButtons.forEach((btn) =>
       btn.classList.toggle("active", btn.dataset.target === target)
     );
+    if (captureFab) {
+      captureFab.classList.toggle("active", target === "media");
+    }
   };
 
   // ---------- bind events (only if elements exist) ----------
@@ -457,6 +626,8 @@ document.addEventListener("DOMContentLoaded", () => {
   if (addCaloriesBtn) addCaloriesBtn.addEventListener("click", handleManualAdd);
   if (forgetGoalBtn) forgetGoalBtn.addEventListener("click", resetAll);
   if (panelToggle) panelToggle.addEventListener("click", togglePanel);
+  if (formFab) formFab.addEventListener("click", openFormModal);
+  if (formOverlay) formOverlay.addEventListener("click", closeFormModal);
   themeCircles.forEach((circle) =>
     circle.addEventListener("click", handleThemeCircleClick)
   );
@@ -469,6 +640,9 @@ document.addEventListener("DOMContentLoaded", () => {
   tabButtons.forEach((btn) =>
     btn.addEventListener("click", () => setActivePage(btn.dataset.target))
   );
+  if (captureFab) {
+    captureFab.addEventListener("click", () => setActivePage("media"));
+  }
 
   // ---------- initial state ----------
   setTheme("default");

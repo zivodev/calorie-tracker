@@ -14,17 +14,30 @@
   <div id="loadingBar"></div>
 
   <div class="container" dir="ltr">
-    <div class="brand" aria-label="CalorieScope">
-      <img src="logo.png" alt="CalorieScope logo" />
-      <span class="brand-title">CalorieScope</span>
+    <div class="topBar">
+      <div class="brand" aria-label="CalorieScope">
+        <img src="logo.png" alt="CalorieScope logo" />
+        <span class="brand-title">CalorieScope</span>
+      </div>
+
+      <button id="formFab" class="formFab" type="button" aria-label="Open body details">
+        <span class="formFabIcon">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="4" width="14" height="16" rx="3" stroke="currentColor" stroke-width="1.8" />
+            <path d="M8 9.5h8M8 13h5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+          </svg>
+        </span>
+      </button>
     </div>
+
+    <div id="formOverlay"></div>
 
     <div class="pages">
       <section class="page panelColumn active" id="page-goal" data-page="goal">
         <div id="userPanel" class="panel">
           <button id="panelToggle" class="panelHeader" aria-expanded="true">
             <span id="panelTitle" data-i18n="panel.title">Body Details</span>
-            <span class="arrow">⌃</span>
+            <span class="arrow">−</span>
           </button>
 
           <div id="panelBody" class="panelBody">
@@ -73,7 +86,9 @@
               <div id="progressText" class="circleValue">0 / 0 kcal</div>
               <div class="circleLabel" data-i18n="progress.label">Calorie goal</div>
             </div>
+          </div>
 
+          <div class="macroCard">
             <div class="macroOrbit" aria-label="Macros progress">
               <div class="microCircle" data-macro="protein">
                 <svg viewBox="0 0 64 64" aria-hidden="true">
@@ -154,20 +169,15 @@
           <div class="settingRow themeRow">
             <div class="settingLabel" data-i18n="settings.theme">Themes</div>
             <div id="themeSelector" class="theme-selector" aria-label="Theme selector">
-              <span class="theme-icon" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 3v3M12 18v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M3 12h3M18 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"
-                    stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-                  <circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.6" />
-                </svg>
-              </span>
               <div class="theme-list">
                 <div class="theme-row theme-row-dark">
+                  <span class="theme-icon theme-icon-dark" aria-hidden="true">🌙</span>
                   <button class="theme-circle" data-theme="default" title="Bronze Night"></button>
                   <button class="theme-circle" data-theme="ember" title="Ember Glow"></button>
                   <button class="theme-circle" data-theme="midnight" title="Midnight"></button>
                 </div>
                 <div class="theme-row theme-row-light">
+                  <span class="theme-icon theme-icon-light" aria-hidden="true">☀️</span>
                   <button class="theme-circle" data-theme="dawn" title="Soft Dawn"></button>
                   <button class="theme-circle" data-theme="ocean" title="Calm Ocean"></button>
                   <button class="theme-circle" data-theme="meadow" title="Fresh Meadow"></button>
@@ -216,6 +226,10 @@
         <span class="tabLabel" data-i18n="nav.settings">Settings</span>
       </button>
     </nav>
+
+    <button id="captureFab" class="captureFab" type="button" aria-label="Open capture">
+      <span class="captureFabIcon">➕</span>
+    </button>
   </div>
 
   <div id="loadingOverlay">
