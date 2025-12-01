@@ -49,6 +49,15 @@ document.addEventListener("DOMContentLoaded", () => {
     fat: $("fatCircle")
   };
 
+  // ---------- external workflow endpoints (n8n) ----------
+  // Replace these with your final (non-test) n8n webhook URLs from the n8n UI.
+  const N8N_ENDPOINTS = {
+    manualCalories:
+      "https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6",
+    mealCapture:
+      "https://caloriescope.app.n8n.cloud/webhook-test/eff0e03c-8382-4f7f-a60b-05dfee430173"
+  };
+
   const allowSelection = (target) =>
     target?.closest && target.closest("input, textarea, select, button, [contenteditable='true']");
 
@@ -258,15 +267,20 @@ document.addEventListener("DOMContentLoaded", () => {
     updateCircleProgress();
     updateMacroUI();
     // --- N8N SEND MANUAL CALORIES ---
-    fetch("https://caloriescope.app.n8n.cloud/webhook-test/bcddd092-eaa8-4a52-9e24-a1a7e5b26dd6", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        caloriesAdded: value,
-        totalCalories: currentCalories,
-        timestamp: new Date().toISOString()
-      })
-    }).catch(() => {});
+    if (N8N_ENDPOINTS.manualCalories) {
+      fetch(N8N_ENDPOINTS.manualCalories, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          caloriesAdded: value,
+          totalCalories: currentCalories,
+          timestamp: new Date().toISOString()
+        })
+      }).catch((err) => {
+        console.error("[CalorieScope] Failed to notify n8n (manual calories):", err);
+      });
+    }
     // --- END N8N ---
     manualCalories.value = "";
   };
@@ -362,18 +376,26 @@ document.addEventListener("DOMContentLoaded", () => {
       renderUploadStatus();
 
       // --- N8N SEND MEAL PHOTO + CAPTION ---
-      const formData = new FormData();
-      const file = imageInput.files?.[0];
-      const caption = document.getElementById("mealCaption")?.value || "";
+      if (N8N_ENDPOINTS.mealCapture) {
+        const formData = new FormData();
+        const file = imageInput.files?.[0];
+        // NOTE: your caption input id in HTML is `imageInfo`, adjust here if needed.
+        const captionInput =
+          document.getElementById("mealCaption") || document.getElementById("imageInfo");
+        const caption = captionInput?.value || "";
 
-      if (file) formData.append("image", file);
-      formData.append("caption", caption);
-      formData.append("timestamp", new Date().toISOString());
+        if (file) formData.append("image", file);
+        formData.append("caption", caption);
+        formData.append("timestamp", new Date().toISOString());
 
-      fetch("https://caloriescope.app.n8n.cloud/webhook-test/eff0e03c-8382-4f7f-a60b-05dfee430173", {
-        method: "POST",
-        body: formData
-      }).catch(() => {});
+        fetch(N8N_ENDPOINTS.mealCapture, {
+          method: "POST",
+          mode: "no-cors",
+          body: formData
+        }).catch((err) => {
+          console.error("[CalorieScope] Failed to notify n8n (meal capture):", err);
+        });
+      }
       // --- END N8N ---
     }, 1200);
   };
